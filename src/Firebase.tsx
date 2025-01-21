@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 
-// Your web app's Firebase configuration
+// Firestore config
 const firebaseConfig = {
   apiKey: "AIzaSyB8ixElwYL5m-iikcYMfFxiW0o5t5zOWx0",
   authDomain: "my-app-d110d.firebaseapp.com",
@@ -16,33 +16,64 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Firestore CRUD Functions
-const addTaskToFirestore = async (task: string) => {
-    try {
-      console.log("Adding task:", task); // Debug log
-      await addDoc(collection(db, "tasks"), { task, completed: false });
-      console.log("Task added to Firestore");
-    } catch (error) {
-      console.error("Error adding task: ", error);
-    }
-  };
+
+// const addTaskToFirestore = async (task: string) => {
+//     try {
+//       console.log("Adding task:", task); // Debug log
+//       await addDoc(collection(db, "tasks"), { task, completed: false });
+//       console.log("Task added to Firestore");
+//     } catch (error) {
+//       console.error("Error adding task: ", error);
+//     }
+//   };
   
 
-  const fetchTasksFromFirestore = async (): Promise<{ id: string; task: string; completed: boolean }[]> => {
-    try {
-      const querySnapshot = await getDocs(collection(db, "tasks"));
-      const tasks = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        task: doc.data().task,
-        completed: doc.data().completed,
-      }));
-      console.log("Fetched tasks:", tasks); // Debug log
-      return tasks;
-    } catch (error) {
-      console.error("Error fetching tasks: ", error);
-      return [];
-    }
-  };
+//   const fetchTasksFromFirestore = async (): Promise<{ id: string; task: string; completed: boolean }[]> => {
+//     try {
+//       const querySnapshot = await getDocs(collection(db, "tasks"));
+//       const tasks = querySnapshot.docs.map((doc) => ({
+//         id: doc.id,
+//         task: doc.data().task,
+//         completed: doc.data().completed,
+//       }));
+//       console.log("Fetched tasks:", tasks); // Debug log
+//       return tasks;
+//     } catch (error) {
+//       console.error("Error fetching tasks: ", error);
+//       return [];
+//     }
+//   };
+
+// Firestore CRUD Functions
+const addTaskToFirestore = async (task: string, date: string, time: string) => {
+  try {
+    await addDoc(collection(db, "tasks"), { task, completed: false, date, time });
+    console.log("Task added to Firestore");
+  } catch (error) {
+    console.error("Error adding task: ", error);
+  }
+};
+
+const fetchTasksFromFirestore = async (): Promise<
+  { id: string; task: string; completed: boolean; date: string; time: string }[]
+> => {
+  try {
+    const querySnapshot = await getDocs(collection(db, "tasks"));
+    const tasks = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      task: doc.data().task,
+      completed: doc.data().completed,
+      date: doc.data().date,
+      time: doc.data().time,
+    }));
+    console.log("Fetched tasks:", tasks);
+    return tasks;
+  } catch (error) {
+    console.error("Error fetching tasks: ", error);
+    return [];
+  }
+};
+
   
 
 const deleteTaskFromFirestore = async (id: string) => {
